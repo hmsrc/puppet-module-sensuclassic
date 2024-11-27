@@ -219,14 +219,15 @@ define sensuclassic::check (
   Anchor['plugins_before_checks']
   ~> Sensuclassic::Check[$name]
 
-  $hooks.each |$k,$v| {
-    $valid_k = $k ? {
-      Integer[1,255]                                           => true,
-      Enum['ok', 'warning', 'critical', 'unknown', 'non-zero'] => true,
-      default => fail("Illegal value for ${k} hook. Valid values are: Integers from 1 to 255 and any of 'ok', 'warning', 'critical', 'unknown', 'non-zero'"),
+  if $hooks {
+    $hooks.each |$k,$v| {
+      $valid_k = $k ? {
+        Integer[1,255]                                           => true,
+        Enum['ok', 'warning', 'critical', 'unknown', 'non-zero'] => true,
+        default => fail("Illegal value for ${k} hook. Valid values are: Integers from 1 to 255 and any of 'ok', 'warning', 'critical', 'unknown', 'non-zero'"),
+      }
     }
   }
-
 
   # This Hash map will ultimately exist at `{"checks" => {"$check_name" =>
   # $check_config}}`
